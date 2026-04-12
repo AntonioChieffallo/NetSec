@@ -1,0 +1,7 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# C build artifacts
+task1/synflood
